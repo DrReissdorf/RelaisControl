@@ -2,7 +2,7 @@ import java.net.*;
 import java.util.Enumeration;
 
 public class UdpDiscover {
-    public void find() {
+    public static String findIP(String discoveryMessage) {
         // Find the server using UDP broadcast
         try {
             //Open a random tcpPort to send the package
@@ -10,13 +10,13 @@ public class UdpDiscover {
             c.setBroadcast(true);
             c.setSoTimeout(2000);
 
-            byte[] sendData = "DISCOVER_REQUEST".getBytes();
+            byte[] sendData = discoveryMessage.getBytes();
 
             //Try the 255.255.255.255 first
             try {
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), Data.udpPort);
                 c.send(sendPacket);
-                System.out.println(getClass().getName() + " >>> Request packet sent to: 255.255.255.255 (DEFAULT)");
+                System.out.println(" >>> Request packet sent to: 255.255.255.255 (DEFAULT)");
             } catch (Exception e) {
             }
 
@@ -42,11 +42,11 @@ public class UdpDiscover {
                     } catch (Exception e) {
                     }
 
-                    System.out.println(getClass().getName() + " >>> Request packet sent to: " + broadcast.getHostAddress() + "; Interface: " + networkInterface.getDisplayName());
+                    System.out.println(" >>> Request packet sent to: " + broadcast.getHostAddress() + "; Interface: " + networkInterface.getDisplayName());
                 }
             }
 
-            System.out.println(getClass().getName() + " >>> Done looping over all network interfaces. Now waiting for a reply!");
+            System.out.println(" >>> Done looping over all network interfaces. Now waiting for a reply!");
 
             //Wait for a response
             byte[] recvBuf = new byte[15000];
@@ -54,18 +54,14 @@ public class UdpDiscover {
             c.receive(receivePacket);
 
             //We have a response
-            System.out.println(getClass().getName() + " >>> Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
-
-
-            //Check if the message is correct
+            System.out.println(" >>> Broadcast response from server: " + receivePacket.getAddress().getHostAddress());
             String message = new String(receivePacket.getData()).trim();
-            Data.ip = message;
-            System.out.println(getClass().getName() + " >>> Set "+message+" as IP...\n");
-
-            //Close the tcpPort!
             c.close();
+            return message;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        return null;
     }
 }
