@@ -54,10 +54,6 @@ public class Controller {
 
             ret = inFromServer.readLine().split(splitRegex);
 
-            for(int i=0 ; i<ret.length ; i++){
-                if(ret[i] != null) System.out.println(ret[i]);
-            }
-
             return ret;
         } catch (IOException e) {
             e.printStackTrace();
