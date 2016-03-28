@@ -16,11 +16,12 @@ class GuiBuilder extends JFrame {
 
     public GuiBuilder(String s) {
         super(s);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         String[] info = new Controller().getInfo(Data.ip,Data.port,";"); //Information about available Relais
 
         Container c = getContentPane();
-        c.setLayout(new GridLayout(info.length,1));
+        c.setLayout(new GridLayout(1+info.length/2,1));
         c.setForeground(Color.black);
 
         programNameLabel = new JLabel(" Relais Control Panel ",SwingConstants.CENTER);
