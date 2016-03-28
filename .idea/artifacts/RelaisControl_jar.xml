@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RelaisControl:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/RelaisControl_jar</output-path>
+    <root id="archive" name="RelaisControl.jar">
+      <element id="module-output" name="RelaisControl" />
+    </root>
+  </artifact>
+</component>
