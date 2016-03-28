@@ -11,12 +11,16 @@ public class Controller {
 
     private Socket connectSocket(String ip, int port) {
         try {
-            Socket server = new Socket(Data.ip, 18745);
-            return server;
+            return new Socket(Data.ip, 18745);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(optionPaneFrame, "No answer from server.\nClosing program");
-            System.exit(-1);
-            e.printStackTrace();
+            try {
+                Data.ip = UdpDiscover.findIP(Data.discover_message,Data.udpPort);
+                return new Socket(Data.ip, 18745);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(optionPaneFrame, "No answer from server.\nClosing program");
+                System.exit(-1);
+                e.printStackTrace();
+            }
         }
 
         return null;
