@@ -14,7 +14,7 @@ public class Controller {
             Socket server = new Socket(Data.ip, 18745);
             return server;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(optionPaneFrame, "No server found!\nClosing program");
+            JOptionPane.showMessageDialog(optionPaneFrame, "No answer from server.\nClosing program");
             System.exit(-1);
             e.printStackTrace();
         }
