@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/RelaisControl_jar</output-path>
     <root id="archive" name="RelaisControl.jar">
       <element id="module-output" name="RelaisControl" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/MyTools.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
