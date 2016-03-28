@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class GuiBuilder extends JFrame {
     private Controller controller;
@@ -11,8 +9,7 @@ class GuiBuilder extends JFrame {
         super(s);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        String[] info = new Controller().getInfo(Data.ip,Data.port,";"); //Information about available Relais
-        System.out.println("Buttons detected: "+info.length);
+        String[] info = new Controller().getInfo(Data.ip,Data.tcpPort,";"); //Information about available Relais
 
         Container c = getContentPane();
         c.setLayout(new GridLayout(1+info.length,1));
@@ -30,7 +27,7 @@ class GuiBuilder extends JFrame {
             temp.setFont (temp.getFont ().deriveFont (16.0f));
             temp.addActionListener(e -> {
                 String command = ((JButton)e.getSource()).getText();
-                controller.sendCommand(command,Data.ip,Data.port);
+                controller.sendCommand(command,Data.ip,Data.tcpPort);
             });
             c.add(temp);
         }

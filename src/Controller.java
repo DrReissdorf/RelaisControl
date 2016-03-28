@@ -14,7 +14,7 @@ public class Controller {
             Socket server = new Socket(Data.ip, 18745);
             return server;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(optionPaneFrame, "Server offline!\nClosing program");
+            JOptionPane.showMessageDialog(optionPaneFrame, "No server found!\nClosing program");
             System.exit(-1);
             e.printStackTrace();
         }
@@ -53,6 +53,8 @@ public class Controller {
             outToServer.flush();
 
             ret = inFromServer.readLine().split(splitRegex);
+
+            System.out.println("Activated relais detected: "+ret.length);
 
             return ret;
         } catch (IOException e) {

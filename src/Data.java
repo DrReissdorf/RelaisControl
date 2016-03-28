@@ -1,4 +1,5 @@
 public class Data {
-    public static String ip = "raspi";
-    public static int port = 18745;
+    public static int udpPort = 18746;
+    public static String ip = null;
+    public static int tcpPort = 18745;
 }
