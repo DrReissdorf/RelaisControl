@@ -2,15 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 
 class GuiBuilder extends JFrame {
-    private Controller controller;
+    private Communication comm;
     private JLabel programNameLabel;
 
     public GuiBuilder(String s) {
         super(s);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        controller = new Controller();
-        String[] info = controller.getInfo(Data.ip,Data.tcpPort,";"); //Information about available Relais
+        comm = new Communication();
+        String[] info = comm.getInfo(";"); //Information about available Relais
 
         Container c = getContentPane();
         c.setLayout(new GridLayout(1+info.length,1));
@@ -26,7 +26,7 @@ class GuiBuilder extends JFrame {
             temp.setFont (temp.getFont ().deriveFont (16.0f));
             temp.addActionListener(e -> {
                 String command = ((JButton)e.getSource()).getText();
-                controller.sendCommand(command,Data.ip,Data.tcpPort);
+                comm.sendCommand(command);
             });
             c.add(temp);
         }
