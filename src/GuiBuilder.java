@@ -1,10 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 class GuiBuilder extends JFrame {
-    private Communication comm;
+    private ControlSocket comm;
     private JLabel programNameLabel;
     private ArrayList<JButton> buttons;
     HashMap<String, JLabel> labelHashMap;
@@ -16,7 +20,7 @@ class GuiBuilder extends JFrame {
 
         buttons = new ArrayList<>();
         labelHashMap = new HashMap<>();
-        comm = new Communication();
+        comm = new ControlSocket();
         String[] info = comm.getInfo(); //Information about available Relais
 
         c = getContentPane();
@@ -29,7 +33,7 @@ class GuiBuilder extends JFrame {
         pack();
         setVisible(true);
 
-        new StatusThread(Data.refreshRatePerSecond).run();
+        new StatusSocket().run();
     }
 
     private void initButtonsAndStatusLabels(String[] info) {
@@ -45,7 +49,6 @@ class GuiBuilder extends JFrame {
                 tempButton.addActionListener(e -> {
                     String command = ((JButton)e.getSource()).getText();
                     comm.sendCommand(command);
-                    actualizeLabels(comm.getInfo());
                 });
                 buttons.add(tempButton);
 
@@ -63,7 +66,18 @@ class GuiBuilder extends JFrame {
         }
     }
 
-    private void actualizeLabels(String[] info) {
+  /*  private void actualizeLabels(String[] info) {
+        JLabel tempLabel;
+        String[] tempString;
+        for(int i=0 ; i<info.length ; i++) {
+            tempString = info[i].split(",");
+            tempLabel = labelHashMap.get(tempString[0]);
+            if(Boolean.parseBoolean(tempString[1])) tempLabel.setBackground(Color.GREEN);
+            else tempLabel.setBackground(Color.RED);
+        }
+    } */
+
+    private void updateLabels(String[] info) {
         JLabel tempLabel;
         String[] tempString;
         for(int i=0 ; i<info.length ; i++) {
@@ -81,22 +95,48 @@ class GuiBuilder extends JFrame {
         return false;
     }
 
-    private class StatusThread extends Thread {
-        private int sleepTime;
+    public class StatusSocket extends Thread {
+        private Socket statusSocket;
+        private BufferedReader bufferedReader;
 
-        public StatusThread(int refreshRatePerSecond) {
-            this.sleepTime = (int)(1000/refreshRatePerSecond);
+        public StatusSocket() {
+            connectSocket();
+        }
+
+        private boolean connectSocket() {
+            try {
+                statusSocket = new Socket(Data.ip, Data.tcp_status_port);
+                bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
+                System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
+                return true;
+            } catch (IOException e) {
+                try {
+                    Data.ip = UdpDiscover.findIP(Data.discover_message,Data.udp_discover_port);
+                    statusSocket = new Socket(Data.ip, Data.tcp_status_port);
+                    bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
+                    System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
+                    return true;
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
+                    System.exit(-1);
+                    e.printStackTrace();
+                    return false;
+                }
+            }
         }
 
         public void run() {
             while(true) {
-                actualizeLabels(comm.getInfo());
                 try {
-                    sleep(sleepTime);
-                } catch (InterruptedException e) {
+                    String[] info = bufferedReader.readLine().split(";");
+                    updateLabels(info);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
         }
+
     }
+
 }
