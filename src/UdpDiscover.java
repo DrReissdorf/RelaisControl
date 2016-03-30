@@ -8,7 +8,7 @@ public class UdpDiscover {
             //Open a random tcp_control_port to send the package
             DatagramSocket c = new DatagramSocket();
             c.setBroadcast(true);
-            c.setSoTimeout(2000);
+            c.setSoTimeout(3000);
 
             byte[] sendData = discoveryMessage.getBytes();
 

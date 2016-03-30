@@ -33,7 +33,7 @@ class GuiBuilder extends JFrame {
         pack();
         setVisible(true);
 
-        new StatusSocket().run();
+        //new StatusSocket().run();
     }
 
     private void initButtonsAndStatusLabels(String[] info) {
