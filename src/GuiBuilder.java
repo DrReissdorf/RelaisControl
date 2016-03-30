@@ -29,7 +29,7 @@ class GuiBuilder extends JFrame {
         pack();
         setVisible(true);
 
-        new StatusThread(250).run();
+        new StatusThread(Data.refreshRatePerSecond).run();
     }
 
     private void initButtonsAndStatusLabels(String[] info) {
@@ -45,6 +45,7 @@ class GuiBuilder extends JFrame {
                 tempButton.addActionListener(e -> {
                     String command = ((JButton)e.getSource()).getText();
                     comm.sendCommand(command);
+                    actualizeLabels(comm.getInfo());
                 });
                 buttons.add(tempButton);
 
@@ -67,9 +68,7 @@ class GuiBuilder extends JFrame {
         String[] tempString;
         for(int i=0 ; i<info.length ; i++) {
             tempString = info[i].split(",");
-            System.out.println(info[i]);
             tempLabel = labelHashMap.get(tempString[0]);
-            System.out.println(tempLabel.getText());
             if(Boolean.parseBoolean(tempString[1])) tempLabel.setBackground(Color.GREEN);
             else tempLabel.setBackground(Color.RED);
         }
@@ -82,18 +81,11 @@ class GuiBuilder extends JFrame {
         return false;
     }
 
-    private JButton getButton(String buttonText) {
-        for(JButton b : buttons) {
-            if(b.getText().equals(buttonText)) return b;
-        }
-        return null;
-    }
-
     private class StatusThread extends Thread {
         private int sleepTime;
 
-        public StatusThread(int sleepTime) {
-            this.sleepTime = sleepTime;
+        public StatusThread(int refreshRatePerSecond) {
+            this.sleepTime = (int)(1000/refreshRatePerSecond);
         }
 
         public void run() {

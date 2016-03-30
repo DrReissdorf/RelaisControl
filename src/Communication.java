@@ -18,6 +18,7 @@ public class Communication {
             socket = new Socket(Data.ip, Data.tcpPort);
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printWriter = new PrintWriter(socket.getOutputStream());
+            System.out.println("\nConnected to "+socket.getInetAddress().getHostAddress());
             return true;
         } catch (IOException e) {
             try {
@@ -25,6 +26,7 @@ public class Communication {
                 socket = new Socket(Data.ip, Data.tcpPort);
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 printWriter = new PrintWriter(socket.getOutputStream());
+                System.out.println("\nConnected to "+socket.getInetAddress().getHostAddress());
                 return true;
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(optionPaneFrame, "No answer from server.\nClosing program");
@@ -44,15 +46,15 @@ public class Communication {
         String[] ret;
 
         try {
-            printWriter.println("info");
+            printWriter.println(Data.getInfo_message);
             printWriter.flush();
 
             ret = bufferedReader.readLine().split(";");
 
-            System.out.println("Activated relais detected: "+ret.length);
-
             return ret;
-        } catch (IOException e) {
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(optionPaneFrame, "No answer from server.\nClosing program");
+            System.exit(-1);
             e.printStackTrace();
         }
 
