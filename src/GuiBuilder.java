@@ -33,7 +33,7 @@ class GuiBuilder extends JFrame {
         pack();
         setVisible(true);
 
-        //new StatusSocket().run();
+        new StatusSocket().run();
     }
 
     private void initButtonsAndStatusLabels(String[] info) {
@@ -130,7 +130,10 @@ class GuiBuilder extends JFrame {
                 try {
                     String[] info = bufferedReader.readLine().split(";");
                     updateLabels(info);
-                } catch (IOException e) {
+                    System.out.println("updating" + info + "\n");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
+                    System.exit(-1);
                     e.printStackTrace();
                 }
             }
