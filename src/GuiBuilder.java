@@ -29,7 +29,7 @@ class GuiBuilder extends JFrame {
         pack();
         setVisible(true);
 
-        new StatusThread(10).run();
+        new StatusThread(250).run();
     }
 
     private void initButtonsAndStatusLabels(String[] info) {
