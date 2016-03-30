@@ -40,14 +40,14 @@ public class Communication {
         printWriter.flush();
     }
 
-    public String[] getInfo(String splitRegex) {
+    public String[] getInfo() {
         String[] ret;
 
         try {
             printWriter.println("info");
             printWriter.flush();
 
-            ret = bufferedReader.readLine().split(splitRegex);
+            ret = bufferedReader.readLine().split(";");
 
             System.out.println("Activated relais detected: "+ret.length);
 
@@ -57,17 +57,5 @@ public class Communication {
         }
 
         return null;
-    }
-
-    private class StatusThread extends Thread {
-        private int sleepTime;
-
-        public StatusThread(int sleepTime) {
-            this.sleepTime = sleepTime;
-        }
-
-        public void run() {
-
-        }
     }
 }

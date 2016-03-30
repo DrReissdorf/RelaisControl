@@ -9,6 +9,6 @@ public class Main {
 
         Data.ip = "192.168.10.46";
 
-        new GuiBuilder("Relais").setVisible(true);
+        new GuiBuilder("Relais Control Panel").setVisible(true);
     }
 }
