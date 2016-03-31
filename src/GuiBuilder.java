@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 class GuiBuilder extends JFrame {
     private ControlSocket comm;
-    private JLabel programNameLabel;
     private ArrayList<JButton> buttons;
     HashMap<String, JLabel> labelHashMap;
     private Container c;
@@ -17,6 +16,7 @@ class GuiBuilder extends JFrame {
     public GuiBuilder(String s) {
         super(s);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         buttons = new ArrayList<>();
         labelHashMap = new HashMap<>();
@@ -106,14 +106,14 @@ class GuiBuilder extends JFrame {
 
         private boolean connectSocket() {
             try {
-                statusSocket = new Socket(Data.ip, Data.tcp_status_port);
+                statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
                 bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
-                System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
+                System.out.println("\n"+getClass().getSimpleName()+" connected!");
                 return true;
             } catch (IOException e) {
                 try {
-                    Data.ip = UdpDiscover.findIP(Data.discover_message,Data.udp_discover_port);
-                    statusSocket = new Socket(Data.ip, Data.tcp_status_port);
+                    Data.ip = UdpDiscover.findIP(Data.DISCOVER_MSG,Data.UDP_DISCOVER_PORT);
+                    statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
                     bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
                     System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
                     return true;

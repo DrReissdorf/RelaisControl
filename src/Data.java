@@ -1,9 +1,8 @@
 public class Data {
-    public static String discover_message = "raspberrypi";
-    public static String getInfo_message = "info";
-    public static int udp_discover_port = 18746;
+    public static final String DISCOVER_MSG = "raspberrypi";
+    public static final String GET_INFO_MESSAGE = "info";
+    public static final int UDP_DISCOVER_PORT = 18746;
+    public static final int TCP_CONTROL_PORT = 18745;
+    public static final int TCP_STATUS_PORT = 18744;
     public static String ip = null;
-    public static int tcp_control_port = 18745;
-    public static int tcp_status_port = 18744;
-    public static int refreshRatePerSecond = 1;
 }

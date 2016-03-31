@@ -5,7 +5,7 @@ public class UdpDiscover {
     public static String findIP(String discoveryMessage, int udpPort) {
         // Find the server using UDP broadcast
         try {
-            //Open a random tcp_control_port to send the package
+            //Open a random TCP_CONTROL_PORT to send the package
             DatagramSocket c = new DatagramSocket();
             c.setBroadcast(true);
             c.setSoTimeout(3000);

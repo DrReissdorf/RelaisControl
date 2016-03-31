@@ -15,15 +15,15 @@ public class ControlSocket {
 
     private boolean connectSocket() {
         try {
-            socket = new Socket(Data.ip, Data.tcp_control_port);
+            socket = new Socket(Data.ip, Data.TCP_CONTROL_PORT);
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printWriter = new PrintWriter(socket.getOutputStream());
             System.out.println("\nConnected to "+socket.getInetAddress().getHostAddress());
             return true;
         } catch (IOException e) {
             try {
-                Data.ip = UdpDiscover.findIP(Data.discover_message,Data.udp_discover_port);
-                socket = new Socket(Data.ip, Data.tcp_control_port);
+                Data.ip = UdpDiscover.findIP(Data.DISCOVER_MSG,Data.UDP_DISCOVER_PORT);
+                socket = new Socket(Data.ip, Data.TCP_CONTROL_PORT);
                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 printWriter = new PrintWriter(socket.getOutputStream());
                 System.out.println("\nConnected to "+socket.getInetAddress().getHostAddress());
@@ -46,7 +46,7 @@ public class ControlSocket {
         String[] ret;
 
         try {
-            printWriter.println(Data.getInfo_message);
+            printWriter.println(Data.GET_INFO_MESSAGE);
             printWriter.flush();
 
             ret = bufferedReader.readLine().split(";");
