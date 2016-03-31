@@ -1,5 +1,5 @@
 public class Data {
-    public static String discover_message = "raspi";
+    public static String discover_message = "raspberrypi";
     public static String getInfo_message = "info";
     public static int udp_discover_port = 18746;
     public static String ip = null;
