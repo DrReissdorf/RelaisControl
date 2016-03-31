@@ -10,8 +10,11 @@ import java.util.HashMap;
 class GuiBuilder extends JFrame {
     private ControlSocket comm;
     private ArrayList<JButton> buttons;
-    HashMap<String, JLabel> labelHashMap;
+    private HashMap<String, JLabel> labelHashMap;
     private Container c;
+
+    private Socket statusSocket;
+    private BufferedReader bufferedReader;
 
     public GuiBuilder(String s) {
         super(s);
@@ -20,26 +23,35 @@ class GuiBuilder extends JFrame {
 
         buttons = new ArrayList<>();
         labelHashMap = new HashMap<>();
-        comm = new ControlSocket();
-        String[] info = comm.getInfo(); //Information about available Relais
 
         c = getContentPane();
         c.setLayout(new GridLayout(0,2));
         c.setForeground(Color.black);
 
-        initButtonsAndStatusLabels(info);
+        comm = new ControlSocket();
+
+        connectStatusSocket();
+        new StatusThread().start();
+
+        initButtonsAndStatusLabels();
 
         setLocation(200,200);
         pack();
         setVisible(true);
-
-        new StatusSocket().start();
     }
 
-    private void initButtonsAndStatusLabels(String[] info) {
+    private void initButtonsAndStatusLabels() {
         JButton tempButton;
         JLabel tempLabel;
         String[] tempString;
+
+        String[] info = new String[0];
+        try {
+            info = bufferedReader.readLine().split(";");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         for(int i=0 ; i<info.length ; i++) {
             tempString = info[i].split(",");
 
@@ -66,16 +78,27 @@ class GuiBuilder extends JFrame {
         }
     }
 
-  /*  private void actualizeLabels(String[] info) {
-        JLabel tempLabel;
-        String[] tempString;
-        for(int i=0 ; i<info.length ; i++) {
-            tempString = info[i].split(",");
-            tempLabel = labelHashMap.get(tempString[0]);
-            if(Boolean.parseBoolean(tempString[1])) tempLabel.setBackground(Color.GREEN);
-            else tempLabel.setBackground(Color.RED);
+    private boolean connectStatusSocket() {
+        try {
+            statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
+            bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
+            System.out.println("StatusSocket connected!");
+            return true;
+        } catch (IOException e) {
+            try {
+                Data.ip = UdpDiscover.findIP(Data.DISCOVER_MSG,Data.UDP_DISCOVER_PORT);
+                statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
+                bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
+                System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
+                return true;
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
+                System.exit(-1);
+                e.printStackTrace();
+                return false;
+            }
         }
-    } */
+    }
 
     private void updateLabels(String[] info) {
         JLabel tempLabel;
@@ -95,51 +118,19 @@ class GuiBuilder extends JFrame {
         return false;
     }
 
-    public class StatusSocket extends Thread {
-        private Socket statusSocket;
-        private BufferedReader bufferedReader;
-
-        public StatusSocket() {
-            System.out.println("StatusSocket created!");
-            connectSocket();
-        }
-
-        private boolean connectSocket() {
-            try {
-                statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
-                bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
-                System.out.println("\n"+getClass().getSimpleName()+" connected!");
-                return true;
-            } catch (IOException e) {
-                try {
-                    Data.ip = UdpDiscover.findIP(Data.DISCOVER_MSG,Data.UDP_DISCOVER_PORT);
-                    statusSocket = new Socket(Data.ip, Data.TCP_STATUS_PORT);
-                    bufferedReader = new BufferedReader(new InputStreamReader(statusSocket.getInputStream()));
-                    System.out.println("\nConnected to "+statusSocket.getInetAddress().getHostAddress());
-                    return true;
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
-                    System.exit(-1);
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-        }
-
+    public class StatusThread extends Thread {
         public void run() {
-            while(true) {
-                try {
+            try {
+                while(true) {
                     String[] info = bufferedReader.readLine().split(";");
                     updateLabels(info);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
-                    System.exit(-1);
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
+                System.exit(-1);
+                e.printStackTrace();
             }
-
         }
-
     }
 
 }
