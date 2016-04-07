@@ -56,7 +56,7 @@ class GuiBuilder extends JFrame {
                 tempButton.setFont (tempButton.getFont ().deriveFont (16.0f));
                 tempButton.addActionListener(e -> {
                     String command = ((JButton)e.getSource()).getText();
-                    controlConnection.send(command);
+                    controlConnection.sendCommand(command);
                 });
                 buttons.add(tempButton);
 

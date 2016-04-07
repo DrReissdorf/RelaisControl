@@ -26,6 +26,19 @@ public class SocketComm {
         pw.flush();
     }
 
+    public boolean sendCommand(String text) {
+        send(text);
+        String temp = null;
+
+        temp = receive();
+
+        if(temp == null) return false;
+
+        if(temp.equals("command received")) {
+            return true;
+        } return false;
+    }
+
     public String receive() {
         try {
             return bufferedReader.readLine().trim();
