@@ -2,10 +2,6 @@ import socket.SocketComm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,12 +9,14 @@ class GuiBuilder extends JFrame {
     private ArrayList<JButton> buttons;
     private HashMap<String, JLabel> labelHashMap;
     private Container c;
+    private String[] info;
 
     private SocketComm controlConnection;
     private SocketComm statusConnection;
 
     public GuiBuilder(String s, SocketComm controlConnection, SocketComm statusConnection) {
         super(s);
+        System.out.println("GuiBuilder()");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -31,9 +29,10 @@ class GuiBuilder extends JFrame {
 
         this.controlConnection = controlConnection;
         this.statusConnection = statusConnection;
-        new StatusThread().start();
 
         initButtonsAndStatusLabels();
+
+        new StatusThread().start();
 
         setLocation(200,200);
         pack();
@@ -41,6 +40,7 @@ class GuiBuilder extends JFrame {
     }
 
     private void initButtonsAndStatusLabels() {
+        System.out.println("initButtonsAndStatusLabels()");
         JButton tempButton;
         JLabel tempLabel;
         String[] tempString;
@@ -56,7 +56,8 @@ class GuiBuilder extends JFrame {
                 tempButton.setFont (tempButton.getFont ().deriveFont (16.0f));
                 tempButton.addActionListener(e -> {
                     String command = ((JButton)e.getSource()).getText();
-                    controlConnection.sendCommand(command);
+                    System.out.println("Sent command: "+command);
+                    controlConnection.send(command);
                 });
                 buttons.add(tempButton);
 
@@ -75,6 +76,7 @@ class GuiBuilder extends JFrame {
     }
 
     private void updateLabels(String[] info) {
+        System.out.println("updateLabels()");
         JLabel tempLabel;
         String[] tempString;
         for(int i=0 ; i<info.length ; i++) {
@@ -96,7 +98,8 @@ class GuiBuilder extends JFrame {
         public void run() {
             try {
                 while(true) {
-                    String[] info = statusConnection.receive().split(";");
+                    info = statusConnection.receive().split(";");
+                    System.out.println("received from server: "+info[0]);
                     updateLabels(info);
                 }
             } catch (Exception e) {
