@@ -12,9 +12,8 @@ class GuiBuilder extends JFrame {
     private String[] info;
 
     private SocketComm controlConnection;
-    private SocketComm statusConnection;
 
-    public GuiBuilder(String s, SocketComm controlConnection, SocketComm statusConnection) {
+    public GuiBuilder(String s, SocketComm controlConnection) {
         super(s);
         System.out.println("GuiBuilder()");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -28,7 +27,6 @@ class GuiBuilder extends JFrame {
         c.setForeground(Color.black);
 
         this.controlConnection = controlConnection;
-        this.statusConnection = statusConnection;
 
         initButtonsAndStatusLabels();
 
@@ -46,7 +44,7 @@ class GuiBuilder extends JFrame {
         String[] tempString;
         String[] info;
 
-        info = statusConnection.receive().split(";");
+        info = controlConnection.receive().split(";");
 
         for(int i=0 ; i<info.length ; i++) {
             tempString = info[i].split(",");
@@ -98,7 +96,7 @@ class GuiBuilder extends JFrame {
         public void run() {
             try {
                 while(true) {
-                    info = statusConnection.receive().split(";");
+                    info = controlConnection.receive().split(";");
                     System.out.println("received from server: "+info[0]);
                     updateLabels(info);
                 }

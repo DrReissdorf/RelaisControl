@@ -12,15 +12,13 @@ public class Main {
         else Data.ip = args[0];
 
         SocketComm controlConnection = null;
-        SocketComm statusConnection = null;
 
         try {
             controlConnection = new SocketComm(new Socket(Data.ip, Data.TCP_CONTROL_PORT));
-            statusConnection = new SocketComm(new Socket(Data.ip, Data.TCP_STATUS_PORT));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        new GuiBuilder("Relais Control Panel",controlConnection,statusConnection).setVisible(true);
+        new GuiBuilder("Relais Control Panel",controlConnection).setVisible(true);
     }
 }
