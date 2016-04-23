@@ -43,32 +43,37 @@ class GuiBuilder extends JFrame {
         JLabel tempLabel;
         String[] tempString;
         String[] info;
+        String[] message;
 
-        info = controlConnection.receive().split(";");
+        message = controlConnection.receive().split("%");
 
-        for(int i=0 ; i<info.length ; i++) {
-            tempString = info[i].split(",");
+        if (message[0].equals("relay")) {
+            info = message[1].split(";");
 
-            if(!isButtonAlreadyInList(tempString[0],buttons)) {
-                tempButton = new JButton(tempString[0]);
-                tempButton.setFont (tempButton.getFont ().deriveFont (16.0f));
-                tempButton.addActionListener(e -> {
-                    String command = ((JButton)e.getSource()).getText();
-                    System.out.println("Sent command: "+command);
-                    controlConnection.send(command);
-                });
-                buttons.add(tempButton);
+            for(int i=0 ; i<info.length ; i++) {
+                tempString = info[i].split(",");
 
-                tempLabel = new JLabel();
+                if(!isButtonAlreadyInList(tempString[0],buttons)) {
+                    tempButton = new JButton(tempString[0]);
+                    tempButton.setFont (tempButton.getFont ().deriveFont (16.0f));
+                    tempButton.addActionListener(e -> {
+                        String command = ((JButton)e.getSource()).getText();
+                        System.out.println("Sent command: "+command);
+                        controlConnection.send("relay%"+command);
+                    });
+                    buttons.add(tempButton);
 
-                if(Boolean.parseBoolean(tempString[1])) tempLabel.setBackground(Color.GREEN);
-                else tempLabel.setBackground(Color.RED);
-                tempLabel.setOpaque(true);
-                tempLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+                    tempLabel = new JLabel();
 
-                labelHashMap.put(tempString[0],tempLabel);
-                c.add(tempButton);
-                c.add(tempLabel);
+                    if(Boolean.parseBoolean(tempString[1])) tempLabel.setBackground(Color.GREEN);
+                    else tempLabel.setBackground(Color.RED);
+                    tempLabel.setOpaque(true);
+                    tempLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+                    labelHashMap.put(tempString[0],tempLabel);
+                    c.add(tempButton);
+                    c.add(tempLabel);
+                }
             }
         }
     }
@@ -96,14 +101,18 @@ class GuiBuilder extends JFrame {
         public void run() {
             try {
                 while(true) {
-                    info = controlConnection.receive().split(";");
-                    System.out.println("received from server: "+info[0]);
-                    updateLabels(info);
+                    String[] message = controlConnection.receive().split("%");
+
+                    System.out.println("received from server: "+message[0]+"%"+message[1]);
+                    if(message[0].equals("relay")) {
+                        info = message[1].split(";");
+                        updateLabels(info);
+                    }
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(new JFrame(), "No answer from server.\nClosing program");
-                System.exit(-1);
                 e.printStackTrace();
+                System.exit(-1);
             }
         }
     }
